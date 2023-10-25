@@ -13,6 +13,8 @@ class News(models.Model):
         ('entertainment', 'Entertainment'),
         ('technology', 'Technology')
     ))
+    created_at = models.DateTimeField(auto_now_add=True, null=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
         return self.title

@@ -38,7 +38,7 @@ class NewsAPIViewTestCase(APITestCase):
             'title': 'Updated Test News Article',
             'content': 'This is an updated test news article.',
             'author': 'Alice Brown',
-            "category": "politics",
+            'category': 'politics',
         }
         url = reverse('news-api-detail', args=[self.news.id])
         response = self.client.put(url, updated_news_data, format='json')
@@ -52,6 +52,7 @@ class NewsAPIViewTestCase(APITestCase):
             'title': 'New Test News Article',
             'content': 'This is a new test news article.',
             'author': 'Jane Smith',
+            'category': 'politics',
         }
         response = self.client.post(self.url, new_news_data, format='json')
   

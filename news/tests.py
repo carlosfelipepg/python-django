@@ -1,3 +1,4 @@
+from typing import OrderedDict
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -17,7 +18,13 @@ class NewsAPIViewTestCase(APITestCase):
     def test_get_all_news(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected_data = NewsSerializer(News.objects.all(), many=True).data
+        news = NewsSerializer(News.objects.all(), many=True).data
+        expected_data = OrderedDict({
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'results': news
+        })
         self.assertEqual(response.data, expected_data)
     
     def test_retrive_one_news(self):

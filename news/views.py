@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from news.models import News
 from news.serializers import NewsSerializer
 
@@ -9,15 +10,25 @@ class NewsAPIView(APIView):
     permission_classes = []
     authentication_classes = []
 
-    def get(self, request, pk=None) -> Response:
+    def get(self, request, pk=None) -> Response:        
         if pk:
             news = News.objects.get(pk=pk)
             serializer = NewsSerializer(news, many=False)
+            response = Response(serializer.data)
         else:
-            news = News.objects.all()
-            serializer = NewsSerializer(news, many=True)
-            
-        return Response(serializer.data)
+            max_items = request.headers.get('size', 10)
+
+            paginator = PageNumberPagination()
+            paginator.page_size = max_items
+
+            news = News.objects.all().order_by('pub_date')
+
+            result = paginator.paginate_queryset(news, request) 
+
+            serializer = NewsSerializer(result, many=True)
+
+            response = paginator.get_paginated_response(serializer.data)                    
+        return response
 
     def post(self, request) -> Response:
         serializer = NewsSerializer(data=request.data)
